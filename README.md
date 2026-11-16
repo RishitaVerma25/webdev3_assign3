@@ -1,92 +1,129 @@
-# Assignment 3: Inventory and Data Management System
+# Inventory and Data Management System (Lab Assignment 3)
 
-**Course:** Web Dev III | **Unit:** 3 | **Marks:** 2.5
+### Student Information
+- **Name:** Rishita
+- **Roll No.:** 2501010228
+- **Course:** B.Tech CSE Core (Web Dev III)
+- **Section:** A
+- **Unit:** Unit 3 | **Marks:** 2.5
 
-## Stack
+---
 
-- Node.js, Express.js, MongoDB, Mongoose, dotenv
+## 📌 Project Overview
 
-## Setup
+This project is a RESTful backend application built for an **Inventory and Data Management System**. Developed with **Node.js**, **Express.js**, and **MongoDB (via Mongoose)**, the service provides complete catalog management, real-time stock modifications, conditional filtering, sorting, pagination, and data analytics using MongoDB aggregation pipelines.
 
-1. Clone the repo and install dependencies:
+---
+
+## 💻 Tech Stack
+
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Database:** MongoDB
+- **Object Data Modeling (ODM):** Mongoose
+- **Environment Management:** dotenv
+
+---
+
+## ⚙️ Installation & Running the Server
+
+1. **Install dependencies:**
    ```bash
    npm install
    ```
-2. Create a `.env` file:
+
+2. **Configure environment variables:**
+   Ensure a `.env` file exists in the root directory:
    ```env
    PORT=5000
    MONGO_URL=mongodb://127.0.0.1:27017/inventory_db
    ```
-3. Start the server:
+
+3. **Start the application:**
    ```bash
    node server.js
    ```
+   The API will be live at `http://localhost:5000/api/products`.
 
-## Project Structure
+---
+
+## 📁 Repository Structure
 
 ```
-├── config/db.js              # MongoDB connection
+├── config/
+│   └── db.js                 # MongoDB connection logic
 ├── controller/
-│   └── productController.js  # All route handlers
+│   └── productController.js  # Request handlers for all routes
 ├── middleware/
-│   ├── errorHandler.js       # Centralized error handling
-│   └── validate.js           # Input validation
-├── model/product.js          # Mongoose schema
-├── routes/productRoutes.js   # API routes
-└── server.js                 # Entry point
+│   ├── errorHandler.js       # Global centralized error middleware
+│   └── validate.js           # Payload & input validation rules
+├── model/
+│   └── product.js            # Mongoose Product model & schema definition
+├── routes/
+│   └── productRoutes.js      # Endpoint route declarations
+├── .env                      # Local environment configuration
+├── .gitignore                # Git ignored patterns
+├── package.json              # Project dependencies
+├── README.md                 # Project documentation
+└── server.js                 # Application entry point
 ```
 
-## Schema — Product
+---
 
-| Field | Type | Validation |
-|---|---|---|
-| `name` | String | required |
-| `sku` | String | required, unique |
-| `category` | String | required |
-| `price` | Number | required, min 0 |
-| `quantity` | Number | min 0, default 0 |
-| `reorderLevel` | Number | min 0, default 10 |
-| `supplier` | String | optional |
+## 🗄️ Database Schema — Product Model
 
-> Virtual field `stockValue` = `price × quantity` is included in all responses.
+| Field | Type | Rules & Validation | Notes |
+| :--- | :--- | :--- | :--- |
+| `name` | String | Required, trimmed | Product display name |
+| `sku` | String | Required, Unique, trimmed | Unique product identifier |
+| `category` | String | Required, trimmed | Classification tag |
+| `price` | Number | Required, Min: 0 | Price per item |
+| `quantity` | Number | Required, Min: 0, Default: 0 | Current warehouse stock |
+| `reorderLevel` | Number | Min: 0, Default: 10 | Low stock threshold alert |
+| `supplier` | String | Optional, trimmed | Vendor or manufacturer |
+| `stockValue` | Number | Virtual (`price * quantity`) | Auto-calculated stock worth |
 
-## API Endpoints
+---
 
-### Products
+## 🛣️ API Endpoints
 
-| Method | Route | Description |
-|---|---|---|
-| `POST` | `/api/products` | Create a product |
-| `GET` | `/api/products` | Get all products (filter, sort, paginate) |
-| `GET` | `/api/products/:id` | Get single product |
-| `PUT` | `/api/products/:id` | Update product details |
-| `PATCH` | `/api/products/:id` | Partial update |
-| `PATCH` | `/api/products/:id/stock` | Adjust stock (`{ "change": 10 }`) |
-| `DELETE` | `/api/products/:id` | Delete product |
+### 1. Product Catalog Endpoints
+| HTTP Method | Route | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/products` | Create and store a new product document |
+| `GET` | `/api/products` | Retrieve catalog with pagination, search, and filters |
+| `GET` | `/api/products/:id` | Fetch details of a single product by ID |
+| `PUT` | `/api/products/:id` | Update complete product information |
+| `PATCH` | `/api/products/:id` | Partially update product fields |
+| `DELETE` | `/api/products/:id` | Remove a product from the database |
 
-### Reports
+### 2. Stock Modification
+| HTTP Method | Route | Description |
+| :--- | :--- | :--- |
+| `PATCH` | `/api/products/:id/stock` | Adjust inventory levels safely (`{ "change": <number> }`) |
 
-| Method | Route | Description |
-|---|---|---|
-| `GET` | `/api/products/low-stock` | Products where `quantity ≤ reorderLevel` |
-| `GET` | `/api/products/summary` | Category-wise inventory aggregation |
+* **Restocking:** Provide a positive integer to increase stock (e.g., `{"change": 15}`).
+* **Sales / Dispatch:** Provide a negative integer to decrease stock (e.g., `{"change": -5}`).
+* **Overdraft Protection:** Prevents negative inventory. Decrement requests that would drop stock below zero are rejected with a `400 Bad Request`.
 
-### Query Parameters — GET `/api/products`
+### 3. Inventory Reports & Aggregations
+| HTTP Method | Route | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/products/low-stock` | Retrieves all items where `quantity <= reorderLevel` |
+| `GET` | `/api/products/summary` | Aggregates category stats (item count, total quantity, total stock value, average price) |
 
-| Param | Example | Description |
-|---|---|---|
-| `category` | `?category=Electronics` | Filter by category |
-| `minPrice` | `?minPrice=100` | Minimum price filter |
-| `maxPrice` | `?maxPrice=5000` | Maximum price filter |
-| `search` | `?search=pen` | Search by name or SKU |
-| `sort` | `?sort=price:asc` | Sort by field (`asc`/`desc`) |
-| `page` | `?page=2` | Page number (default: 1) |
-| `limit` | `?limit=10` | Results per page (default: 10) |
+---
 
-## Stock Adjustment
+## 🔍 Query Parameters (`GET /api/products`)
 
-Send a `PATCH` to `/api/products/:id/stock` with:
-```json
-{ "change": 10 }
-```
-Positive values restock, negative values deduct. Deductions are blocked if quantity would go below 0.
+You can combine any of the following query options:
+
+| Parameter | Type | Example | Purpose |
+| :--- | :--- | :--- | :--- |
+| `category` | String | `?category=Stationery` | Filter by category |
+| `search` | String | `?search=table` | Case-insensitive search in `name` or `sku` |
+| `minPrice` | Number | `?minPrice=200` | Filter items with price >= minPrice |
+| `maxPrice` | Number | `?maxPrice=1500` | Filter items with price <= maxPrice |
+| `sort` | String | `?sort=price:desc` | Sort by field ascending (`:asc`) or descending (`:desc`) |
+| `page` | Integer | `?page=1` | Target page index (default: 1) |
+| `limit` | Integer | `?limit=10` | Records per page (default: 10) |
