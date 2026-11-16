@@ -11,7 +11,7 @@ const createProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
   try {
-    const { category, minPrice, maxPrice, search, sort, sortBy, order, page = 1, limit = 10 } = req.query;
+    const { category, minPrice, maxPrice, search, sort, page = 1, limit = 10 } = req.query;
     const filter = {};
 
     if (category) filter.category = category;
@@ -31,8 +31,6 @@ const getProducts = async (req, res, next) => {
     if (sort) {
       const parts = sort.split(':');
       sortOptions[parts[0]] = parts[1] === 'desc' ? -1 : 1;
-    } else if (sortBy) {
-      sortOptions[sortBy] = order === 'desc' ? -1 : 1;
     } else {
       sortOptions.createdAt = -1;
     }
@@ -73,7 +71,7 @@ const getProductById = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      returnDocument: 'after',
+      new: true,
       runValidators: true
     });
     if (!product) {
@@ -94,7 +92,7 @@ const updateStock = async (req, res, next) => {
         ...(change < 0 ? { quantity: { $gte: Math.abs(change) } } : {})
       },
       { $inc: { quantity: change } },
-      { returnDocument: 'after', runValidators: true }
+      { new: true, runValidators: true }
     );
 
     if (!product) {

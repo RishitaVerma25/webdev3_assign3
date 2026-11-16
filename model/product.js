@@ -47,7 +47,7 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.virtual('stockValue').get(function () {
-  return (this.price || 0) * (this.quantity || 0);
+  return this.price * this.quantity;
 });
 
 module.exports = mongoose.model('Product', productSchema);
