@@ -1,10 +1,10 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const Product = require('../models/Product');
-const connectDB = require('../config/db');
+const Product = require('./model/product');
+const connectDB = require('./config/db');
 
 const products = [
-  // 1. Furniture - matches assignment screenshot
+  // 1. Furniture - Study Table (matches Postman screenshot)
   {
     name: 'Study Table',
     sku: 'FURN-TB-012',
@@ -14,7 +14,7 @@ const products = [
     reorderLevel: 4,
     supplier: 'IKEA India'
   },
-  // 2. Stationery - matches assignment screenshot
+  // 2. Stationery - Gel Pen Pack of 15 (matches Postman screenshot)
   {
     name: 'Gel Pen Pack of 15',
     sku: 'STNY-PN-713',
@@ -129,18 +129,13 @@ const products = [
 const seedDB = async () => {
   try {
     await connectDB();
-
-    // Clear existing products
     await Product.deleteMany({});
     console.log('Cleared existing product collection.');
-
-    // Insert initial catalog
     const createdProducts = await Product.insertMany(products);
     console.log(`Successfully seeded ${createdProducts.length} products into MongoDB!`);
-
     process.exit(0);
   } catch (error) {
-    console.error(`Error during database seeding: ${error.message}`);
+    console.error(`Error during seeding: ${error.message}`);
     process.exit(1);
   }
 };
