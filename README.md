@@ -8,7 +8,7 @@
 
 ## Setup
 
-1. Install dependencies:
+1. Clone the repo and install dependencies:
    ```bash
    npm install
    ```
@@ -17,11 +17,7 @@
    PORT=5000
    MONGO_URL=mongodb://127.0.0.1:27017/inventory_db
    ```
-3. Seed the sample dataset (optional):
-   ```bash
-   npm run seed
-   ```
-4. Start the server:
+3. Start the server:
    ```bash
    node server.js
    ```

@@ -15,17 +15,13 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-if (require.main === module) {
-  connectDB()
-    .then(() => {
-      app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-      });
-    })
-    .catch((err) => {
-      console.error('Failed to connect to DB', err);
-      process.exit(1);
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
-}
-
-module.exports = app;
+  })
+  .catch((err) => {
+    console.error('Failed to connect to DB', err);
+    process.exit(1);
+  });
