@@ -9,13 +9,13 @@
 
 ---
 
-## 📌 Project Overview
+##  Project Overview
 
 This project is a RESTful backend application built for an **Inventory and Data Management System**. Developed with **Node.js**, **Express.js**, and **MongoDB (via Mongoose)**, the service provides complete catalog management, real-time stock modifications, conditional filtering, sorting, pagination, and data analytics using MongoDB aggregation pipelines.
 
 ---
 
-## 💻 Tech Stack
+##  Tech Stack
 
 - **Runtime:** Node.js
 - **Framework:** Express.js
@@ -25,7 +25,7 @@ This project is a RESTful backend application built for an **Inventory and Data 
 
 ---
 
-## ⚙️ Installation & Running the Server
+##  Installation & Running the Server
 
 1. **Install dependencies:**
    ```bash
@@ -47,7 +47,7 @@ This project is a RESTful backend application built for an **Inventory and Data 
 
 ---
 
-## 📁 Repository Structure
+##  Repository Structure
 
 ```
 ├── config/
@@ -70,7 +70,7 @@ This project is a RESTful backend application built for an **Inventory and Data 
 
 ---
 
-## 🗄️ Database Schema — Product Model
+##  Database Schema — Product Model
 
 | Field | Type | Rules & Validation | Notes |
 | :--- | :--- | :--- | :--- |
@@ -85,7 +85,7 @@ This project is a RESTful backend application built for an **Inventory and Data 
 
 ---
 
-## 🛣️ API Endpoints
+##  API Endpoints
 
 ### 1. Product Catalog Endpoints
 | HTTP Method | Route | Description |
@@ -114,7 +114,7 @@ This project is a RESTful backend application built for an **Inventory and Data 
 
 ---
 
-## 🔍 Query Parameters (`GET /api/products`)
+##  Query Parameters (`GET /api/products`)
 
 You can combine any of the following query options:
 
