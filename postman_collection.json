@@ -1,0 +1,182 @@
+{
+  "info": {
+    "_postman_id": "a3b4c5d6-e7f8-4901-abcd-ef1234567890",
+    "name": "Assignment 3 - Inventory Management API",
+    "description": "Collection for Web Dev III Assignment 3: Inventory and Data Management System using Node.js, Express, MongoDB, and Mongoose.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/products",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Get All Products (Default Pagination)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}?page=1&limit=10",
+          "host": ["{{baseUrl}}"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "10" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "2. Filter & Sort Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}?category=Electronics&sortBy=price&order=desc",
+          "host": ["{{baseUrl}}"],
+          "query": [
+            { "key": "category", "value": "Electronics" },
+            { "key": "sortBy", "value": "price" },
+            { "key": "order", "value": "desc" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. Search Products (Name / SKU)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}?search=Table",
+          "host": ["{{baseUrl}}"],
+          "query": [
+            { "key": "search", "value": "Table" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "4. Low-Stock Alert Report",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/low-stock",
+          "host": ["{{baseUrl}}"],
+          "path": ["low-stock"]
+        }
+      }
+    },
+    {
+      "name": "5. Category-wise Summary (Aggregation)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/summary",
+          "host": ["{{baseUrl}}"],
+          "path": ["summary"]
+        }
+      }
+    },
+    {
+      "name": "6. Create New Product",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "if (json._id) {",
+              "    pm.collectionVariables.set('productId', json._id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Gel Pen Pack of 15\",\n  \"sku\": \"STNY-PN-713-NEW\",\n  \"category\": \"Stationery\",\n  \"price\": 120,\n  \"quantity\": 40,\n  \"reorderLevel\": 20,\n  \"supplier\": \"Cello Pens\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}",
+          "host": ["{{baseUrl}}"]
+        }
+      }
+    },
+    {
+      "name": "7. Get Single Product by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/{{productId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{productId}}"]
+        }
+      }
+    },
+    {
+      "name": "8. Update Product Details",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Gel Pen Pack of 15 (Updated)\",\n  \"price\": 140,\n  \"quantity\": 60\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/{{productId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{productId}}"]
+        }
+      }
+    },
+    {
+      "name": "9. Update Stock Level (Increment / Decrement)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"change\": 10\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/{{productId}}/stock",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{productId}}", "stock"]
+        }
+      }
+    },
+    {
+      "name": "10. Delete Product",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/{{productId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["{{productId}}"]
+        }
+      }
+    }
+  ]
+}
